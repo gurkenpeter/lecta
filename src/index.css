@@ -1,0 +1,91 @@
+:root {
+  --bg-color: #e9e3d3;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --accent-color: #000000;
+  --divider-color: #000000;
+  --divider-width: 2px;
+  --font-main: 'Lora', serif;
+  --font-heading: 'Source Serif 4', serif;
+}
+
+[data-font='sans'] {
+  --font-main: 'DM Sans', sans-serif !important;
+  --font-heading: 'DM Sans', sans-serif !important;
+}
+
+[data-font='serif'] {
+  --font-main: 'Lora', serif !important;
+  --font-heading: 'Source Serif 4', serif !important;
+}
+
+[data-theme='dark'] {
+  --bg-color: #0f0f0e;
+  /* Deep paper-black */
+  --text-primary: #e9e3d3;
+  /* Original beige as text */
+  --text-secondary: #8c887d;
+  /* Muted beige */
+  --accent-color: #e9e3d3;
+  --divider-color: rgba(233, 227, 211, 0.15);
+  /* Soft beige dividers */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-weight: var(--font-weight-main, 400);
+  /* Dynamic Weight */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  text-transform: var(--text-transform, uppercase);
+  letter-spacing: -0.02em;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}

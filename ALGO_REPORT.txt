@@ -1,0 +1,28 @@
+BERICHT: IMPLEMENTIERUNG EINES EMPFEHLUNGS-ALGORITHMUS (LECTA)
+
+Zusammenfassung:
+Die Implementierung eines personalisierten Feeds kann in drei Komplexitätsstufen unterteilt werden. Für eine Web-App wie Lecta ist eine "Frontend-First"-Lösung kurzfristig am effizientesten.
+
+STUFE 1: DIE BASIS-VERSION (Frontend-Only)
+Komplexität: Gering (1-2 Tage)
+Funktionsweise:
+- Tracking: Jedes Mal, wenn ein Nutzer einen Artikel "liked" oder eine Kategorie lange liest, wird ein Zähler im "LocalStorage" des Browsers erhöht (z.B. { "Technik": 5, "Umwelt": 2 }).
+- Sortierung: Der Feed wird nicht rein chronologisch angezeigt, sondern Artikel aus Kategorien mit hohen Werten werden weiter oben platziert.
+Problem: Funktioniert nur auf einem Gerät und verliert Daten beim Löschen des Browser-Caches.
+
+STUFE 2: DER INTERESSEN-PROFIL-ANSATZ (Fullstack)
+Komplexität: Mittel (1-2 Wochen)
+Funktionsweise:
+- Nutzerprofile: Speicherung der Klick-Historie in einer Datenbank (z.B. Supabase/PostgreSQL).
+- Scoring: Jedem Artikel wird ein Score zugewiesen: `Score = (Kategorie-Interesse * 0.7) + (Aktualität * 0.3)`.
+Problem: Erfordert ein Backend und eine Nutzer-Authentifizierung (Login).
+
+STUFE 3: DER "MODERNE" ANSATZ (Vector Embeddings / ML)
+Komplexität: Hoch (Wochen/Monate)
+Funktionsweise:
+- Semantische Analyse: Eine KI (wie GPT oder Gemini) analysiert den Inhalt der Artikel und wandelt sie in Zahlenvektoren (Embeddings) um.
+- Ähnlichkeit: Das System zeigt Artikel an, deren Vektoren nah an den Vektoren der vom Nutzer bereits gelesenen Artikel liegen ("Collaborative Filtering").
+Vorteil: Erkennt Interessen auch über Kategorien hinweg (z.B. Nutzer mag speziell "KI-Hardware", nicht nur allgemein "Technik").
+
+EMPFEHLUNG FÜR LECTA:
+Ich empfehle mit Stufe 1 zu starten. Wir können das "Like"-System (Herz-Icon) implementieren und die Daten lokal speichern, um den Feed sofort dynamischer wirken zu lassen, ohne eine komplexe Server-Infrastruktur aufbauen zu müssen.
