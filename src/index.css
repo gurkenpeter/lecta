@@ -7,6 +7,21 @@
   --divider-width: 2px;
   --font-main: 'Lora', serif;
   --font-heading: 'Source Serif 4', serif;
+  --headline-size: 52px;
+  --body-size: 21px;
+  --content-padding-v: 60px;
+  --content-padding-h: 40px;
+  --navbar-height: 70px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --headline-size: 32px;
+    --body-size: 18px;
+    --content-padding-v: 30px;
+    --content-padding-h: 20px;
+    --navbar-height: 64px;
+  }
 }
 
 [data-font='sans'] {
@@ -21,14 +36,10 @@
 
 [data-theme='dark'] {
   --bg-color: #0f0f0e;
-  /* Deep paper-black */
   --text-primary: #e9e3d3;
-  /* Original beige as text */
   --text-secondary: #8c887d;
-  /* Muted beige */
   --accent-color: #e9e3d3;
   --divider-color: rgba(233, 227, 211, 0.15);
-  /* Soft beige dividers */
 }
 
 * {
@@ -42,7 +53,6 @@ body {
   color: var(--text-primary);
   font-family: var(--font-main);
   font-weight: var(--font-weight-main, 400);
-  /* Dynamic Weight */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -64,6 +74,14 @@ h4 {
   font-weight: 400;
   text-transform: var(--text-transform, uppercase);
   letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.max-width-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--content-padding-h);
+  width: 100%;
 }
 
 .glass {

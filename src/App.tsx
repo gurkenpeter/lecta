@@ -332,7 +332,7 @@ function App() {
                             localStorage.setItem('lecta_caps', next.toString());
                         }}
                     />
-                    <main style={{ paddingTop: '70px' }}>
+                    <main style={{ paddingTop: 'var(--navbar-height)' }}>
                         <CategoryFilter
                             activeCategory={activeCategory}
                             onCategoryChange={(cat) => {

@@ -10,7 +10,7 @@ export const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFil
     return (
         <div style={{
             position: 'sticky',
-            top: '70px',
+            top: 'var(--navbar-height)',
             zIndex: 900,
             backgroundColor: 'var(--bg-color)',
             opacity: 0.95,
@@ -18,7 +18,7 @@ export const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFil
             borderBottom: '1px solid rgba(0,0,0,0.1)',
             overflowX: 'auto',
             whiteSpace: 'nowrap',
-            padding: '12px 20px',
+            padding: '12px var(--content-padding-h)',
             display: 'flex',
             gap: '8px',
             scrollbarWidth: 'none',

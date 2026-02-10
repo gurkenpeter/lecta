@@ -35,11 +35,11 @@ export const Navbar = ({
             top: 0,
             left: 0,
             right: 0,
-            height: '70px',
+            height: 'var(--navbar-height)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 20px',
+            padding: '0 var(--content-padding-h)',
             zIndex: 1000,
             borderBottom: '1px solid var(--divider-color)',
             backgroundColor: 'var(--bg-color)',
@@ -49,7 +49,7 @@ export const Navbar = ({
                 LECTA
             </div>
 
-            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 'clamp(10px, 3vw, 20px)', alignItems: 'center' }}>
                 {/* Font Settings Trigger */}
                 <div style={{ position: 'relative' }}>
                     <button
