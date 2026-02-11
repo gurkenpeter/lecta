@@ -161,6 +161,13 @@ function App() {
         }
     };
 
+    const refreshCategories = useCallback(() => {
+        setArticles(prev => prev.map(a => ({
+            ...a,
+            category: categorizeHeadlineLocal(a.headline)
+        })));
+    }, []);
+
     const handleLike = (id: string, category: string) => {
         const isCurrentlyLiked = likedArticles.includes(id)
         let newLikedArticles: string[]
@@ -326,7 +333,12 @@ function App() {
                 </motion.div>
             )}
 
-            {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
+            {showAdmin && (
+                <AdminDashboard
+                    onClose={() => setShowAdmin(false)}
+                    onRulesChanged={refreshCategories}
+                />
+            )}
         </div>
     )
 }

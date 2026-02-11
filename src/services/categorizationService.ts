@@ -8,8 +8,8 @@ export interface FilterRule {
 }
 
 // Standard-Regeln (ehemals die statische Liste)
-const DEFAULT_RULES: FilterRule[] = [
-    { id: '1', category: 'Politik', type: 'OR', keywords: ["detention", 'government', 'parliament', 'election', 'minister', 'senate', 'congress', 'president', 'chancellor', 'party', 'coalition', 'legislation', 'law', 'bill', 'diplomat', 'policy', 'vote', 'campaign', 'opposition', 'democracy', 'referendum', 'epstein', 'trump'] },
+export const DEFAULT_RULES: FilterRule[] = [
+    { id: '1', category: 'Politik', type: 'OR', keywords: ["immigration", "detention", 'government', 'parliament', 'election', 'minister', 'senate', 'congress', 'president', 'chancellor', 'party', 'coalition', 'legislation', 'law', 'bill', 'diplomat', 'policy', 'vote', 'campaign', 'opposition', 'democracy', 'referendum', 'epstein', 'trump'] },
     { id: '2', category: 'Wirtschaft', type: 'OR', keywords: ['stock', 'MARKET', 'shares', 'corporation', 'company', 'CEO', 'profit', 'loss', 'revenue', 'GDP', 'inflation', 'recession', 'trade', 'export', 'import', 'investment', 'merger', 'acquisition', 'employment', 'unemployment', 'interest rate', 'central bank', 'economy', 'industry'] },
     { id: '3', category: 'Panorama', type: 'OR', keywords: ['accident', 'incident', 'crime', 'police', 'court', 'trial', 'victim', 'witness', 'disaster', 'emergency', 'rescue', 'fire', 'flood', 'weather', 'community', 'people', 'daily life', 'society'] },
     { id: '4', category: 'Sport', type: 'OR', keywords: ['football', 'soccer', 'basketball', 'tennis', 'championship', 'league', 'tournament', 'match', 'game', 'player', 'athlete', 'coach', 'team', 'goal', 'score', 'win', 'defeat', 'Olympic', 'World Cup', 'medal', 'training'] },
