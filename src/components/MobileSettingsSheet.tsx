@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Type, Moon, Sun, X, Download, Key } from 'lucide-react'
+import { Type, Moon, Sun, X, Download, Key, ShieldCheck } from 'lucide-react'
 
 interface MobileSettingsSheetProps {
     isOpen: boolean;
@@ -14,6 +14,7 @@ interface MobileSettingsSheetProps {
     onToggleCaps: () => void;
     onGetBackup: () => void;
     onRestore: () => void;
+    onOpenAdmin: () => void;
 }
 
 export const MobileSettingsSheet = ({
@@ -28,7 +29,8 @@ export const MobileSettingsSheet = ({
     isAllCaps,
     onToggleCaps,
     onGetBackup,
-    onRestore
+    onRestore,
+    onOpenAdmin
 }: MobileSettingsSheetProps) => {
     return (
         <AnimatePresence>
@@ -147,6 +149,21 @@ export const MobileSettingsSheet = ({
                             >
                                 <span>GROSSBUCHSTABEN</span>
                                 <div style={{ opacity: 0.6 }}>{isAllCaps ? 'AN' : 'AUS'}</div>
+                            </button>
+
+                            {/* Admin & Filter Dashboard */}
+                            <button
+                                onClick={() => {
+                                    onClose();
+                                    onOpenAdmin();
+                                }}
+                                style={{
+                                    width: '100%', padding: '20px', borderRadius: '20px', border: '2px solid #ef4444',
+                                    backgroundColor: 'transparent', color: '#ef4444',
+                                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: 900
+                                }}
+                            >
+                                <ShieldCheck size={20} /> ADMIN DASHBOARD
                             </button>
 
                             {/* Daten */}

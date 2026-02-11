@@ -6,20 +6,21 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { ToastContainer, ToastMessage } from './components/ToastContainer'
 import { MobileBottomNav } from './components/MobileBottomNav'
 import { MobileSettingsSheet } from './components/MobileSettingsSheet'
+import { AdminDashboard } from './components/AdminDashboard'
 import { Article } from './data/mockArticles'
 import { fetchRedditNews } from './services/redditService'
-import { categorizeHeadlineLocal, categorizeHeadlinesLocal } from './services/categorizationService'
-import { getCachedArticle, saveToCache, saveBatchToCache } from './services/cacheService'
+import { categorizeHeadlineLocal } from './services/categorizationService'
+import { getCachedArticle, saveToCache } from './services/cacheService'
 import { AnimatePresence, motion } from 'framer-motion'
 
 function App() {
     const [articles, setArticles] = useState<Article[]>([])
+    const [loading, setLoading] = useState(true)
+    const [loadingProgress, setLoadingProgress] = useState('Daten werden geladen...')
     const [activeCategory, setActiveCategory] = useState('Alle')
     const [isDark, setIsDark] = useState(false)
-    const [likedCategories, setLikedCategories] = useState<Record<string, number>>({})
     const [likedArticles, setLikedArticles] = useState<string[]>([])
-    const [loading, setLoading] = useState(true)
-    const [loadingProgress, setLoadingProgress] = useState('News werden geladen...')
+    const [likedCategories, setLikedCategories] = useState<Record<string, number>>({})
     const [toasts, setToasts] = useState<ToastMessage[]>([])
     const [after, setAfter] = useState<string | null>(null)
     const [isFetchingMore, setIsFetchingMore] = useState(false)
@@ -28,45 +29,57 @@ function App() {
     const [isAllCaps, setIsAllCaps] = useState<boolean>(true)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
     const [showMobileSettings, setShowMobileSettings] = useState(false)
+    const [showAdmin, setShowAdmin] = useState(false)
+
     const addToast = useCallback((message: string, title?: string, type: 'error' | 'warning' | 'info' = 'error') => {
         const id = Math.random().toString(36).substring(2, 9);
+        const timestamp = Date.now();
 
         setToasts(prev => {
-            // Wir gruppieren nun nach dem Titel (Kategorie)
-            const existingIndex = title
-                ? prev.findIndex(t => t.title === title)
-                : -1;
-
-            if (existingIndex !== -1) {
-                const updated = [...prev];
-                updated[existingIndex] = {
-                    ...updated[existingIndex],
-                    message: message, // Immer die neuste Nachricht anzeigen
-                    count: (updated[existingIndex].count || 1) + 1,
-                    timestamp: Date.now()
-                };
-                return updated;
+            const existing = prev.find(t => t.message === message && t.type === type);
+            if (existing) {
+                return prev.map(t =>
+                    t.id === existing.id
+                        ? { ...t, count: (t.count || 1) + 1, timestamp }
+                        : t
+                );
             }
-
-            return [...prev, { id, title, message, type, count: 1 }];
+            return [...prev, { id, title, message, type, count: 1, timestamp }];
         });
     }, []);
 
-    const removeToast = (id: string) => {
+    const removeToast = useCallback((id: string) => {
         setToasts(prev => prev.filter(t => t.id !== id));
-    };
+    }, []);
 
-    // Initial load
     useEffect(() => {
-        const loadInitialData = async () => {
-            setLoading(true)
-            setLoadingProgress('Reddit Schlagzeilen werden abgerufen...')
+        const handleResize = () => setIsMobile(window.innerWidth <= 768)
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    useEffect(() => {
+        const savedLiked = localStorage.getItem('lecta_liked')
+        const savedCategories = localStorage.getItem('lecta_categories')
+        const savedTheme = localStorage.getItem('lecta_theme')
+        const savedFont = localStorage.getItem('lecta_font')
+        const savedWeight = localStorage.getItem('lecta_weight')
+        const savedCaps = localStorage.getItem('lecta_caps')
+
+        if (savedLiked) setLikedArticles(JSON.parse(savedLiked))
+        if (savedCategories) setLikedCategories(JSON.parse(savedCategories))
+        if (savedTheme) setIsDark(savedTheme === 'dark')
+        if (savedFont) setCurrentFont(savedFont as 'serif' | 'sans')
+        if (savedWeight) setFontWeight(parseInt(savedWeight))
+        if (savedCaps) setIsAllCaps(savedCaps === 'true')
+
+        const loadData = async () => {
             try {
-                const { articles: newFromReddit, nextAfter } = await fetchRedditNews()
+                setLoadingProgress('Reddit News werden abgerufen...');
+                const { articles: redditArticles, nextAfter } = await fetchRedditNews();
                 setAfter(nextAfter);
 
-                // Zuerst Cache anwenden
-                const processedArticles = newFromReddit.map((article: Article) => {
+                const processedArticles = redditArticles.map((article: Article) => {
                     const cached = getCachedArticle(article.id);
                     if (cached) {
                         return { ...article, category: cached.category, catcher: cached.catcher };
@@ -74,41 +87,26 @@ function App() {
                     return article;
                 });
 
-                setArticles(processedArticles);
-
-                // Alles sofort kategorisieren (da lokal & synchron)
-                const fullyProcessed = processedArticles.map((a: Article) => {
-                    if (a.category === 'Laden...' || a.category === 'Panorama') {
-                        return { ...a, category: categorizeHeadlineLocal(a.headline) };
-                    }
-                    return a;
-                });
+                // Sofort lokal kategorisieren
+                const fullyProcessed = processedArticles.map((a: Article) => ({
+                    ...a,
+                    category: categorizeHeadlineLocal(a.headline)
+                }));
 
                 setArticles(fullyProcessed);
                 setLoading(false)
             } catch (err: any) {
                 addToast(err.message, 'Lade-Fehler');
-                setLoading(false);
+                setLoading(false)
             }
         }
-
-        const savedLikes = localStorage.getItem('lecta_likes')
-        const savedArticles = localStorage.getItem('lecta_liked_articles')
-        const savedFont = localStorage.getItem('lecta_font') as 'serif' | 'sans'
-        const savedWeight = localStorage.getItem('lecta_weight')
-        const savedCaps = localStorage.getItem('lecta_caps')
-        if (savedLikes) setLikedCategories(JSON.parse(savedLikes))
-        if (savedArticles) setLikedArticles(JSON.parse(savedArticles))
-        if (savedFont) setCurrentFont(savedFont)
-        if (savedWeight) setFontWeight(Number(savedWeight))
-        if (savedCaps !== null) setIsAllCaps(savedCaps === 'true')
-
-        const handleResize = () => setIsMobile(window.innerWidth <= 768)
-        window.addEventListener('resize', handleResize)
-
-        loadInitialData()
-        return () => window.removeEventListener('resize', handleResize)
+        loadData()
     }, [addToast])
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+        localStorage.setItem('lecta_theme', isDark ? 'dark' : 'light')
+    }, [isDark])
 
     const toggleFont = () => {
         const next = currentFont === 'serif' ? 'sans' : 'serif'
@@ -164,64 +162,63 @@ function App() {
 
         setLikedArticles(newLikedArticles)
         setLikedCategories(newLikedCategories)
-        localStorage.setItem('lecta_liked_articles', JSON.stringify(newLikedArticles))
-        localStorage.setItem('lecta_likes', JSON.stringify(newLikedCategories))
-    }
-
-    const getBackupCode = () => {
-        const data = { likedCategories, likedArticles }
-        return btoa(JSON.stringify(data))
-    }
-
-    const restoreFromCode = (code: string) => {
-        try {
-            const decoded = JSON.parse(atob(code))
-            setLikedCategories(decoded.likedCategories || {})
-            setLikedArticles(decoded.likedArticles || [])
-            localStorage.setItem('lecta_likes', JSON.stringify(decoded.likedCategories))
-            localStorage.setItem('lecta_liked_articles', JSON.stringify(decoded.likedArticles))
-            alert('Profil erfolgreich wiederhergestellt!')
-        } catch (e) {
-            alert('Ungültiger Code!')
-        }
+        localStorage.setItem('lecta_liked', JSON.stringify(newLikedArticles))
+        localStorage.setItem('lecta_categories', JSON.stringify(newLikedCategories))
     }
 
     const getSortedArticles = () => {
-        let baseArticles = activeCategory === 'Alle'
+        let filtered = activeCategory === 'Alle'
             ? articles
             : articles.filter(a => a.category === activeCategory)
 
-        if (activeCategory === 'Alle') {
-            return [...baseArticles].sort((a, b) => {
+        if (activeCategory === 'Alle' && Object.keys(likedCategories).length > 0) {
+            return [...filtered].sort((a, b) => {
                 const scoreA = likedCategories[a.category] || 0
                 const scoreB = likedCategories[b.category] || 0
                 return scoreB - scoreA
             })
         }
-        return baseArticles
+        return filtered
+    }
+
+    const getBackupCode = () => {
+        const data = {
+            liked: likedArticles,
+            categories: likedCategories,
+            theme: isDark ? 'dark' : 'light',
+            font: currentFont,
+            weight: fontWeight,
+            caps: isAllCaps
+        }
+        return btoa(JSON.stringify(data))
+    }
+
+    const restoreFromCode = (code: string) => {
+        try {
+            const data = JSON.parse(atob(code))
+            if (data.liked) setLikedArticles(data.liked)
+            if (data.categories) setLikedCategories(data.categories)
+            if (data.theme) setIsDark(data.theme === 'dark')
+            if (data.font) setCurrentFont(data.font)
+            if (data.weight) setFontWeight(data.weight)
+            if (data.caps) setIsAllCaps(data.caps)
+            addToast('Profil erfolgreich wiederhergestellt!', 'Erfolg', 'info')
+        } catch (e) {
+            addToast('Ungültiger Wiederherstellungs-Code', 'Fehler')
+        }
     }
 
     return (
-        <div
-            className="app-container"
-            data-theme={isDark ? 'dark' : 'light'}
-            data-font={currentFont}
-            style={{
-                '--font-weight-main': fontWeight,
-                '--text-transform': isAllCaps ? 'uppercase' : 'none'
-            } as any}
-        >
+        <div className={`app-container font-${currentFont} ${isAllCaps ? 'all-caps' : ''}`}>
             <ToastContainer toasts={toasts} onRemove={removeToast} />
 
-            <AnimatePresence mode="wait">
-                {loading && <LoadingScreen key="loader" progress={loadingProgress} />}
-            </AnimatePresence>
-
-            {!loading && (
+            {loading ? (
+                <LoadingScreen progress={loadingProgress} />
+            ) : (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.5 }}
                 >
                     {!isMobile && (
                         <Navbar
@@ -245,6 +242,7 @@ function App() {
                                 setIsAllCaps(next);
                                 localStorage.setItem('lecta_caps', next.toString());
                             }}
+                            onOpenAdmin={() => setShowAdmin(true)}
                         />
                     )}
 
@@ -309,9 +307,12 @@ function App() {
                             const code = prompt('Wiederherstellungs-Code eingeben:')
                             if (code) restoreFromCode(code)
                         }}
+                        onOpenAdmin={() => setShowAdmin(true)}
                     />
                 </motion.div>
             )}
+
+            {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
         </div>
     )
 }

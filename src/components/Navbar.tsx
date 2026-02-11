@@ -1,4 +1,4 @@
-import { Search, User, Bell, Moon, Sun, Key, Download, Type, Settings } from 'lucide-react'
+import { Search, User, Bell, Moon, Sun, Key, Download, Type, Settings, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -13,6 +13,7 @@ interface NavbarProps {
     onWeightChange: (weight: number) => void;
     isAllCaps: boolean;
     onToggleCaps: () => void;
+    onOpenAdmin: () => void;
 }
 
 export const Navbar = ({
@@ -25,7 +26,8 @@ export const Navbar = ({
     fontWeight,
     onWeightChange,
     isAllCaps,
-    onToggleCaps
+    onToggleCaps,
+    onOpenAdmin
 }: NavbarProps) => {
     const [showSettings, setShowSettings] = useState(false);
 
@@ -50,6 +52,15 @@ export const Navbar = ({
             </div>
 
             <div style={{ display: 'flex', gap: 'clamp(10px, 3vw, 20px)', alignItems: 'center' }}>
+                {/* Admin Trigger */}
+                <button
+                    onClick={onOpenAdmin}
+                    title="Admin Dashboard"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', display: 'flex' }}
+                >
+                    <ShieldCheck size={20} />
+                </button>
+
                 {/* Font Settings Trigger */}
                 <div style={{ position: 'relative' }}>
                     <button
