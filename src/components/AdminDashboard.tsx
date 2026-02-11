@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Trash2, Save, X, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { FilterRule, getStoredRules, saveRules, RuleType } from '../services/categorizationService';
 
-const ADMIN_PASSWORD = (import.meta as any).env.VITE_ADMIN_PASSWORD || 'admin123';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
 export const AdminDashboard = ({ onClose }: { onClose: () => void }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
