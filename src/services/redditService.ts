@@ -12,11 +12,8 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
 
         const response = await fetch(url.toString(), {
             method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-Lecta-Client': 'Lecta-News-App-v1.0'
-            },
-            cache: 'no-store'
+            mode: 'cors',
+            credentials: 'omit'
         });
 
         if (!response.ok) {
