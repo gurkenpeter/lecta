@@ -9,7 +9,6 @@ import { MobileSettingsSheet } from './components/MobileSettingsSheet'
 import { Article } from './data/mockArticles'
 import { fetchRedditNews } from './services/redditService'
 import { categorizeHeadlineLocal, categorizeHeadlinesLocal } from './services/categorizationService'
-import { getFirstThreeSentences } from './services/contentService'
 import { getCachedArticle, saveToCache, saveBatchToCache } from './services/cacheService'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -24,7 +23,6 @@ function App() {
     const [toasts, setToasts] = useState<ToastMessage[]>([])
     const [after, setAfter] = useState<string | null>(null)
     const [isFetchingMore, setIsFetchingMore] = useState(false)
-    const [isAnalyzingMore, setIsAnalyzingMore] = useState(false)
     const [currentFont, setCurrentFont] = useState<'serif' | 'sans'>('serif')
     const [fontWeight, setFontWeight] = useState<number>(500)
     const [isAllCaps, setIsAllCaps] = useState<boolean>(true)
@@ -78,15 +76,15 @@ function App() {
 
                 setArticles(processedArticles);
 
-                // Nur Artikel anreichern, die noch NICHT im Cache sind
-                const firstBatch = processedArticles.slice(0, 20);
-                const needsEnrichment = firstBatch.filter((a: Article) => a.category === 'Laden...');
+                // Alles sofort kategorisieren (da lokal & synchron)
+                const fullyProcessed = processedArticles.map((a: Article) => {
+                    if (a.category === 'Laden...' || a.category === 'Panorama') {
+                        return { ...a, category: categorizeHeadlineLocal(a.headline) };
+                    }
+                    return a;
+                });
 
-                if (needsEnrichment.length > 0) {
-                    setLoadingProgress(`${needsEnrichment.length} neue Artikel werden analysiert...`);
-                    await enrichArticlesBatch(needsEnrichment);
-                }
-
+                setArticles(fullyProcessed);
                 setLoading(false)
             } catch (err: any) {
                 addToast(err.message, 'Lade-Fehler');
@@ -123,7 +121,7 @@ function App() {
     }, [fontWeight]);
 
     const fetchMoreFromReddit = async () => {
-        if (isFetchingMore || isAnalyzingMore || !after) return;
+        if (isFetchingMore || !after) return;
         setIsFetchingMore(true);
         try {
             const { articles: newArticles, nextAfter } = await fetchRedditNews(after);
@@ -137,97 +135,19 @@ function App() {
                 return article;
             });
 
-            // Wir fügen die neuen Artikel dem State hinzu
-            setArticles(prev => [...prev, ...processed]);
+            // Sofort lokal kategorisieren
+            const fullyProcessed = processed.map((a: Article) => ({
+                ...a,
+                category: categorizeHeadlineLocal(a.headline)
+            }));
 
-            // Jetzt starten wir die ANALYSE für die ersten 20 neuen (ungecachten) Artikel
-            const needsEnrichment = processed.slice(0, 20).filter(a => a.category === 'Laden...');
-            if (needsEnrichment.length > 0) {
-                setIsAnalyzingMore(true);
-                await enrichArticlesBatch(needsEnrichment);
-            }
+            setArticles(prev => [...prev, ...fullyProcessed]);
         } catch (error) {
             console.error("Fehler beim Nachladen von Reddit", error);
         } finally {
             setIsFetchingMore(false);
-            setIsAnalyzingMore(false);
         }
     };
-
-    const enrichArticlesBatch = async (articlesToEnrich: Article[]) => {
-        if (articlesToEnrich.length === 0) return;
-
-        try {
-            // 1. Kategorien per Keywords bestimmen (Synchron)
-            const headlines = articlesToEnrich.map(a => a.headline);
-            const categories = categorizeHeadlinesLocal(headlines);
-
-            // 2. Inhalts-Scraping (muss weiterhin einzeln pro URL sein, aber wir machen es parallel)
-            const contentPromises = articlesToEnrich.map(a => getFirstThreeSentences(a.url));
-            const contentResults = await Promise.allSettled(contentPromises);
-
-            // 3. Cache aktualisieren und State setzen
-            const cacheUpdates: Record<string, { category: string, catcher: string }> = {};
-
-            setArticles(prev => {
-                const next = [...prev];
-                articlesToEnrich.forEach((article, index) => {
-                    const articleIndex = next.findIndex(a => a.id === article.id);
-                    if (articleIndex !== -1) {
-                        const category = categories[index] || 'Panorama';
-                        let catcher = '';
-
-                        if (contentResults[index].status === 'fulfilled') {
-                            const val = (contentResults[index] as PromiseFulfilledResult<string | null>).value;
-                            catcher = val || ''; // Leer lassen statt Fehlermeldung
-                        } else {
-                            catcher = '';
-                        }
-
-                        const update = { category, catcher };
-                        cacheUpdates[article.id] = update;
-
-                        next[articleIndex] = {
-                            ...next[articleIndex],
-                            ...update
-                        };
-                    }
-                });
-                return next;
-            });
-
-            // Batch-Save in LocalStorage
-            saveBatchToCache(cacheUpdates);
-        } catch (error: any) {
-            addToast(`Batch-Fehler: ${error.message}`, 'System-Fehler');
-            console.error("General batch enrichment error", error);
-        }
-    };
-
-    const enrichArticleSync = async (id: string, headline: string, url: string) => {
-        // Zuerst Cache prüfen
-        const cached = getCachedArticle(id);
-        if (cached) {
-            setArticles(prev => prev.map(a => a.id === id ? { ...a, category: cached.category, catcher: cached.catcher } : a));
-            return;
-        }
-
-        try {
-            // Kategorie lokal bestimmen (Sync)
-            const category = categorizeHeadlineLocal(headline);
-
-            // Inhalts-Scraping (Async)
-            const result = await getFirstThreeSentences(url);
-            const catcher = result || '';
-
-            // In Cache speichern
-            saveToCache(id, category, catcher);
-
-            setArticles(prev => prev.map(a => a.id === id ? { ...a, category, catcher } : a));
-        } catch (error: any) {
-            console.error("General enrichment error", error);
-        }
-    }
 
     const handleLike = (id: string, category: string) => {
         const isCurrentlyLiked = likedArticles.includes(id)
@@ -354,10 +274,7 @@ function App() {
                                 setActiveCategory(cat);
                                 window.scrollTo(0, 0);
                             }}
-                            onEnrich={enrichArticleSync}
-                            onBatchEnrich={enrichArticlesBatch}
                             onLoadMoreFromSource={fetchMoreFromReddit}
-                            isAnalyzingMore={isAnalyzingMore}
                         />
                     </main>
 

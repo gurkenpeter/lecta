@@ -82,23 +82,19 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                     }}>
                         {article.headline}
                     </h2>
-                    {article.catcher &&
-                        article.catcher !== 'Inhalt wird geladen...' &&
-                        !article.catcher.includes('Inhalt nicht verfügbar') &&
-                        !article.catcher.toLowerCase().includes('scraping') &&
-                        !article.catcher.toLowerCase().includes('blocked') && (
-                            <p style={{
-                                fontSize: 'var(--body-size)',
-                                color: 'var(--text-secondary)',
-                                lineHeight: 1.5,
-                                maxWidth: '100%',
-                                fontFamily: 'var(--font-main)',
-                                fontWeight: 'var(--font-weight-main)',
-                                margin: 0
-                            }}>
-                                {article.catcher}
-                            </p>
-                        )}
+                    {article.catcher && (
+                        <p style={{
+                            fontSize: 'var(--body-size)',
+                            color: 'var(--text-secondary)',
+                            lineHeight: 1.5,
+                            maxWidth: '100%',
+                            fontFamily: 'var(--font-main)',
+                            fontWeight: 'var(--font-weight-main)',
+                            margin: 0
+                        }}>
+                            {article.catcher}
+                        </p>
+                    )}
                 </div>
 
                 {/* Actions Section */}

@@ -1,17 +1,13 @@
 import { ArticleCard } from './ArticleCard'
 import { Article } from '../data/mockArticles'
-import { useState, useEffect, useRef } from 'react'
-import { SkeletonFeed } from './SkeletonFeed'
+import { useState, useEffect } from 'react'
 
 interface FeedProps {
     articles: Article[];
     likedArticles: string[];
     onLike: (id: string, category: string) => void;
     onCategoryChange: (category: string) => void;
-    onEnrich: (id: string, headline: string, url: string) => Promise<void>;
-    onBatchEnrich: (articles: Article[]) => Promise<void>;
     onLoadMoreFromSource: () => Promise<void>;
-    isAnalyzingMore: boolean;
 }
 
 export const Feed = ({
@@ -19,10 +15,7 @@ export const Feed = ({
     likedArticles,
     onLike,
     onCategoryChange,
-    onEnrich,
-    onBatchEnrich,
-    onLoadMoreFromSource,
-    isAnalyzingMore
+    onLoadMoreFromSource
 }: FeedProps) => {
     const [displayArticles, setDisplayArticles] = useState<Article[]>([])
     const [loadingVisible, setLoadingVisible] = useState(false)
@@ -36,11 +29,11 @@ export const Feed = ({
     }, [articles])
 
     const handleLoadMore = async () => {
-        if (loadingVisible || isAnalyzingMore) return;
+        if (loadingVisible) return;
         setLoadingVisible(true);
 
         const currentLength = displayArticles.length;
-        const nextBatchSize = 5;
+        const nextBatchSize = 10;
 
         // Wenn wir am Ende der verfügbaren Liste sind, neue von Quelle laden
         if (currentLength + nextBatchSize >= articles.length) {
@@ -53,7 +46,9 @@ export const Feed = ({
     }
 
     return (
-        <div style={{ padding: '40px 20px', maxWidth: '850px', margin: '0 auto' }}>
+        <div style={{ padding: 'var(--content-padding-v) var(--content-padding-h)', maxWidth: '850px', margin: '0 auto' }}>
+            <div id="feed-start" />
+
             {displayArticles.map((article) => (
                 <ArticleCard
                     key={article.id}
@@ -64,8 +59,6 @@ export const Feed = ({
                 />
             ))}
 
-            {isAnalyzingMore && <SkeletonFeed count={3} />}
-
             <div style={{
                 padding: '60px 0',
                 display: 'flex',
@@ -73,7 +66,7 @@ export const Feed = ({
                 alignItems: 'center',
                 gap: '20px'
             }}>
-                {!isAnalyzingMore && displayArticles.length < articles.length + 50 && (
+                {displayArticles.length < articles.length + 100 && (
                     <button
                         onClick={handleLoadMore}
                         disabled={loadingVisible}
@@ -115,7 +108,7 @@ export const Feed = ({
                     height: 20px;
                     border: 2px solid rgba(0,0,0,0.1);
                     borderTop: 2px solid #000;
-                    borderRadius: '50%';
+                    borderRadius: 50%;
                     animation: spin 1s linear infinite;
                 }
                 @keyframes spin {

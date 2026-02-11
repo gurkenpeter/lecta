@@ -17,8 +17,8 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
                 id: data.id,
                 source: data.domain || 'Reddit',
                 headline: data.title,
-                catcher: 'Inhalt wird geladen...',
-                category: 'Laden...',
+                catcher: data.selftext || '', // Reddit-eigener Text falls vorhanden
+                category: 'Panorama', // Standard, wird in App.tsx sofort überschrieben
                 url: data.url,
                 imageUrl: data.thumbnail && data.thumbnail.startsWith('http')
                     ? data.thumbnail
