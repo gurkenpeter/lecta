@@ -1,11 +1,11 @@
 // Native fetch has better compatibility in some strict mobile environments
 import { Article } from '../data/mockArticles';
 
-const REDDIT_NEWS_URL = 'https://www.reddit.com/r/news.json';
+const FALLBACK_URL = 'https://lectanews.vercel.app/';
 
 export const fetchRedditNews = async (after?: string): Promise<{ articles: Article[], nextAfter: string | null }> => {
-    try {
-        const url = new URL('https://www.reddit.com/r/news.json');
+    const fetchFromUrl = async (targetUrl: string, isFallback: boolean = false) => {
+        const url = new URL(targetUrl);
         if (after) url.searchParams.append('after', after);
         url.searchParams.append('limit', '40');
         url.searchParams.append('raw_json', '1');
@@ -49,8 +49,19 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
         }).filter((a: any) => a !== null) as Article[];
 
         return { articles, nextAfter };
-    } catch (error: any) {
-        console.error('Fetch error:', error);
-        throw error;
+    };
+
+    try {
+        // Try Primary Reddit URL first
+        return await fetchFromUrl('https://www.reddit.com/r/news.json');
+    } catch (primaryError) {
+        console.warn('Primary fetch failed, trying fallback...', primaryError);
+        try {
+            // Try Fallback URL
+            return await fetchFromUrl(FALLBACK_URL, true);
+        } catch (fallbackError) {
+            console.error('Fallback fetch also failed:', fallbackError);
+            throw fallbackError;
+        }
     }
 };
