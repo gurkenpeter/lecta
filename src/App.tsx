@@ -8,7 +8,7 @@ import { MobileBottomNav } from './components/MobileBottomNav'
 import { MobileSettingsSheet } from './components/MobileSettingsSheet'
 import { Article } from './data/mockArticles'
 import { fetchRedditNews } from './services/redditService'
-import { categorizeHeadline, categorizeHeadlines } from './services/openRouterService'
+import { categorizeHeadlineLocal, categorizeHeadlinesLocal } from './services/categorizationService'
 import { getFirstThreeSentences } from './services/contentService'
 import { getCachedArticle, saveToCache, saveBatchToCache } from './services/cacheService'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -158,9 +158,9 @@ function App() {
         if (articlesToEnrich.length === 0) return;
 
         try {
-            // 1. Kategorien im Batch von der KI holen
+            // 1. Kategorien per Keywords bestimmen (Synchron)
             const headlines = articlesToEnrich.map(a => a.headline);
-            const categories = await categorizeHeadlines(headlines);
+            const categories = categorizeHeadlinesLocal(headlines);
 
             // 2. Inhalts-Scraping (muss weiterhin einzeln pro URL sein, aber wir machen es parallel)
             const contentPromises = articlesToEnrich.map(a => getFirstThreeSentences(a.url));
@@ -199,7 +199,7 @@ function App() {
             // Batch-Save in LocalStorage
             saveBatchToCache(cacheUpdates);
         } catch (error: any) {
-            addToast(`Batch-Fehler: ${error.message}`, 'KI-Fehler');
+            addToast(`Batch-Fehler: ${error.message}`, 'System-Fehler');
             console.error("General batch enrichment error", error);
         }
     };
@@ -213,27 +213,12 @@ function App() {
         }
 
         try {
-            // Wir führen sie parallel aus, aber fangen Fehler individuell ab
-            const results = await Promise.allSettled([
-                categorizeHeadline(headline),
-                getFirstThreeSentences(url)
-            ]);
+            // Kategorie lokal bestimmen (Sync)
+            const category = categorizeHeadlineLocal(headline);
 
-            let category = 'Panorama';
-            let catcher = '';
-
-            if (results[0].status === 'fulfilled') {
-                category = (results[0] as PromiseFulfilledResult<string>).value;
-            } else {
-                addToast(`${headline.substring(0, 30)}...: ${results[0].reason.message}`, 'KI-Fehler');
-            }
-
-            if (results[1].status === 'fulfilled') {
-                const val = (results[1] as PromiseFulfilledResult<string | null>).value;
-                catcher = val || '';
-            } else {
-                catcher = '';
-            }
+            // Inhalts-Scraping (Async)
+            const result = await getFirstThreeSentences(url);
+            const catcher = result || '';
 
             // In Cache speichern
             saveToCache(id, category, catcher);
