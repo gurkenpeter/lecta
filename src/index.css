@@ -1,10 +1,10 @@
 :root {
   --bg-color: #e9e3d3;
   --text-primary: #000000;
-  --text-secondary: #333333;
-  --accent-color: #000000;
-  --divider-color: #000000;
-  --divider-width: 2px;
+  --text-secondary: #4a453e;
+  --accent-color: #1a1a1a;
+  --divider-color: rgba(0, 0, 0, 0.08);
+  --divider-width: 1.5px;
   --font-main: 'Lora', serif;
   --font-heading: 'Source Serif 4', serif;
   --headline-size: clamp(32px, 8vw, 54px);
@@ -13,8 +13,13 @@
   --content-padding-h: clamp(15px, 5vw, 40px);
   --navbar-height: 70px;
   --glass-bg: rgba(233, 227, 211, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border: rgba(0, 0, 0, 0.05);
   --text-transform: none;
+}
+
+::selection {
+  background-color: #d1ccbf;
+  color: #000;
 }
 
 @media (max-width: 768px) {
