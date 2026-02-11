@@ -15,14 +15,12 @@ export const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFil
             backgroundColor: 'var(--bg-color)',
             opacity: 0.95,
             backdropFilter: 'blur(10px)',
-            borderBottom: '1px solid rgba(0,0,0,0.1)',
+            borderBottom: '1px solid var(--divider-color)',
             overflowX: 'auto',
             whiteSpace: 'nowrap',
             padding: '12px var(--content-padding-h)',
             display: 'flex',
-            gap: '8px',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
+            gap: '8px'
         }} className="no-scrollbar">
             {categories.map((category) => {
                 const isActive = activeCategory === category;
@@ -36,10 +34,10 @@ export const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFil
                         style={{
                             padding: '8px 18px',
                             border: 'none',
-                            backgroundColor: isActive ? 'var(--text-primary)' : 'transparent',
+                            backgroundColor: isActive ? 'var(--text-primary)' : 'rgba(0,0,0,0.04)',
                             color: isActive ? 'var(--bg-color)' : 'var(--text-primary)',
-                            fontSize: '14px',
-                            fontWeight: 800, // Very bold
+                            fontSize: '13px',
+                            fontWeight: 800,
                             cursor: 'pointer',
                             borderRadius: '30px',
                             transition: 'all 0.3s ease',
@@ -52,8 +50,8 @@ export const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFil
                     >
                         {!isActive && (
                             <div style={{
-                                width: '8px',
-                                height: '8px',
+                                width: '6px',
+                                height: '6px',
                                 borderRadius: '50%',
                                 backgroundColor: color
                             }} />

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Bookmark, Share2, Heart } from 'lucide-react'
+import { Bookmark, Share2, Heart, ExternalLink } from 'lucide-react'
 import { Article, categoryColors } from '../data/mockArticles'
 
 interface ArticleCardProps {
@@ -24,60 +24,61 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                 borderBottom: 'var(--divider-width) solid var(--divider-color)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '24px',
+                gap: '20px',
                 color: 'var(--text-primary)'
             }}
         >
-            <div className="max-width-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="max-width-container" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Header: Source & Category Pills */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    fontFamily: 'Inter, sans-serif'
+                    justifyContent: 'space-between',
+                    width: '100%'
                 }}>
-                    <div style={{
-                        backgroundColor: 'var(--text-primary)',
-                        color: 'var(--bg-color)',
-                        padding: '4px 12px',
-                        fontSize: '11px',
-                        fontWeight: 900,
-                        textTransform: 'var(--text-transform)',
-                        letterSpacing: '0.1em'
-                    }}>
-                        {article.source}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                            backgroundColor: 'var(--text-primary)',
+                            color: 'var(--bg-color)',
+                            padding: '4px 10px',
+                            fontSize: '10px',
+                            fontWeight: 900,
+                            textTransform: 'var(--text-transform)',
+                            letterSpacing: '0.1em'
+                        }}>
+                            {article.source}
+                        </div>
+                        <div style={{ fontSize: '11px', fontWeight: 700, opacity: 0.5 }}>• {article.timestamp}</div>
                     </div>
+
                     <button
                         onClick={() => onCategoryChange(article.category)}
                         style={{
-                            border: `1.5px solid ${categoryColor}`,
-                            padding: '3px 14px',
-                            borderRadius: '20px',
-                            fontSize: '10px',
-                            fontWeight: 800,
+                            border: `none`,
+                            padding: '4px 0',
+                            fontSize: '11px',
+                            fontWeight: 900,
                             color: categoryColor,
                             backgroundColor: 'transparent',
                             textTransform: 'var(--text-transform)',
                             letterSpacing: '0.05em',
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s ease'
+                            cursor: 'pointer'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                        {article.category}
+                        #{article.category}
                     </button>
                 </div>
 
                 {/* Content Section */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <h2 style={{
                         fontSize: 'var(--headline-size)',
-                        lineHeight: 1.1,
+                        lineHeight: 1.15,
                         fontWeight: 'calc(var(--font-weight-main) + 300)',
                         fontFamily: 'var(--font-heading)',
                         color: 'var(--text-primary)',
-                        margin: 0
+                        margin: 0,
+                        letterSpacing: '-0.02em'
                     }}>
                         {article.headline}
                     </h2>
@@ -90,7 +91,7 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                                 fontSize: 'var(--body-size)',
                                 color: 'var(--text-secondary)',
                                 lineHeight: 1.5,
-                                maxWidth: '95%',
+                                maxWidth: '100%',
                                 fontFamily: 'var(--font-main)',
                                 fontWeight: 'var(--font-weight-main)',
                                 margin: 0
@@ -100,62 +101,52 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                         )}
                 </div>
 
-                {/* Meta - Minimal */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '8px', flexWrap: 'wrap' }}>
-                    <div style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'Inter, sans-serif', opacity: 0.7 }}>{article.timestamp}</div>
-
+                {/* Actions Section */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: '10px'
+                }}>
                     <a
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             fontWeight: 900,
                             color: 'var(--bg-color)',
                             backgroundColor: 'var(--text-primary)',
-                            padding: '12px 24px',
-                            borderRadius: '12px',
+                            padding: '14px 28px',
+                            borderRadius: '14px',
                             textTransform: 'var(--text-transform)',
                             letterSpacing: '0.05em',
                             textDecoration: 'none',
-                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: '0 4px 0 rgba(0,0,0,0.2)',
-                            display: 'inline-block'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 0 rgba(0,0,0,0.2)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 0 rgba(0,0,0,0.2)';
-                        }}
-                        onMouseDown={(e) => {
-                            e.currentTarget.style.transform = 'translateY(2px)';
-                            e.currentTarget.style.boxShadow = '0 2px 0 rgba(0,0,0,0.2)';
-                        }}
-                        onMouseUp={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 0 rgba(0,0,0,0.2)';
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            boxShadow: '0 4px 0 rgba(0,0,0,0.15)'
                         }}
                     >
-                        Artikel lesen
+                        <span>LESEN</span>
+                        <ExternalLink size={16} />
                     </a>
 
-                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginLeft: 'auto' }}>
+                    <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
                         <button
                             onClick={() => onLike(article.id, article.category)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: 0, color: 'inherit' }}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: 10, color: 'inherit' }}
                         >
                             <Heart
-                                size={20}
+                                size={22}
                                 strokeWidth={2.5}
                                 fill={isLiked ? "#ef4444" : "none"}
                                 color={isLiked ? "#ef4444" : "currentColor"}
                             />
                         </button>
-                        <Bookmark size={20} strokeWidth={2.5} style={{ cursor: 'pointer', opacity: 0.7 }} />
-                        <Share2 size={20} strokeWidth={2.5} style={{ cursor: 'pointer', opacity: 0.7 }} />
+                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 10 }}>
+                            <Share2 size={22} strokeWidth={2.5} style={{ opacity: 0.7 }} />
+                        </button>
                     </div>
                 </div>
             </div>

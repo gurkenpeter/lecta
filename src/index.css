@@ -7,19 +7,17 @@
   --divider-width: 2px;
   --font-main: 'Lora', serif;
   --font-heading: 'Source Serif 4', serif;
-  --headline-size: 52px;
-  --body-size: 21px;
-  --content-padding-v: 60px;
-  --content-padding-h: 40px;
+  --headline-size: clamp(32px, 8vw, 54px);
+  --body-size: clamp(17px, 4vw, 21px);
+  --content-padding-v: clamp(30px, 10vh, 80px);
+  --content-padding-h: clamp(15px, 5vw, 40px);
   --navbar-height: 70px;
+  --glass-bg: rgba(233, 227, 211, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
 }
 
 @media (max-width: 768px) {
   :root {
-    --headline-size: 32px;
-    --body-size: 18px;
-    --content-padding-v: 30px;
-    --content-padding-h: 20px;
     --navbar-height: 64px;
   }
 }
@@ -40,6 +38,8 @@
   --text-secondary: #8c887d;
   --accent-color: #e9e3d3;
   --divider-color: rgba(233, 227, 211, 0.15);
+  --glass-bg: rgba(15, 15, 14, 0.8);
+  --glass-border: rgba(233, 227, 211, 0.1);
 }
 
 * {
@@ -56,7 +56,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
 }
 
 .app-container {
@@ -89,6 +90,18 @@ h4 {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 ::-webkit-scrollbar {

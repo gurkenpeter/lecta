@@ -4,6 +4,8 @@ import { CategoryFilter } from './components/CategoryFilter'
 import { Feed } from './components/Feed'
 import { LoadingScreen } from './components/LoadingScreen'
 import { ToastContainer, ToastMessage } from './components/ToastContainer'
+import { MobileBottomNav } from './components/MobileBottomNav'
+import { MobileSettingsSheet } from './components/MobileSettingsSheet'
 import { Article } from './data/mockArticles'
 import { fetchRedditNews } from './services/redditService'
 import { categorizeHeadline, categorizeHeadlines } from './services/openRouterService'
@@ -26,6 +28,8 @@ function App() {
     const [currentFont, setCurrentFont] = useState<'serif' | 'sans'>('serif')
     const [fontWeight, setFontWeight] = useState<number>(500)
     const [isAllCaps, setIsAllCaps] = useState<boolean>(true)
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+    const [showMobileSettings, setShowMobileSettings] = useState(false)
     const addToast = useCallback((message: string, title?: string, type: 'error' | 'warning' | 'info' = 'error') => {
         const id = Math.random().toString(36).substring(2, 9);
 
@@ -101,7 +105,11 @@ function App() {
         if (savedWeight) setFontWeight(Number(savedWeight))
         if (savedCaps !== null) setIsAllCaps(savedCaps === 'true')
 
+        const handleResize = () => setIsMobile(window.innerWidth <= 768)
+        window.addEventListener('resize', handleResize)
+
         loadInitialData()
+        return () => window.removeEventListener('resize', handleResize)
     }, [addToast])
 
     const toggleFont = () => {
@@ -310,29 +318,42 @@ function App() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <Navbar
-                        isDark={isDark}
-                        onToggleDark={() => setIsDark(!isDark)}
-                        onGetBackup={() => alert(`Dein Wiederherstellungs-Code:\n\n${getBackupCode()}`)}
-                        onRestore={() => {
-                            const code = prompt('Wiederherstellungs-Code eingeben:')
-                            if (code) restoreFromCode(code)
-                        }}
-                        currentFont={currentFont}
-                        onToggleFont={toggleFont}
-                        fontWeight={fontWeight}
-                        onWeightChange={(w) => {
-                            setFontWeight(w);
-                            localStorage.setItem('lecta_weight', w.toString());
-                        }}
-                        isAllCaps={isAllCaps}
-                        onToggleCaps={() => {
-                            const next = !isAllCaps;
-                            setIsAllCaps(next);
-                            localStorage.setItem('lecta_caps', next.toString());
-                        }}
-                    />
-                    <main style={{ paddingTop: 'var(--navbar-height)' }}>
+                    {!isMobile && (
+                        <Navbar
+                            isDark={isDark}
+                            onToggleDark={() => setIsDark(!isDark)}
+                            onGetBackup={() => alert(`Dein Wiederherstellungs-Code:\n\n${getBackupCode()}`)}
+                            onRestore={() => {
+                                const code = prompt('Wiederherstellungs-Code eingeben:')
+                                if (code) restoreFromCode(code)
+                            }}
+                            currentFont={currentFont}
+                            onToggleFont={toggleFont}
+                            fontWeight={fontWeight}
+                            onWeightChange={(w) => {
+                                setFontWeight(w);
+                                localStorage.setItem('lecta_weight', w.toString());
+                            }}
+                            isAllCaps={isAllCaps}
+                            onToggleCaps={() => {
+                                const next = !isAllCaps;
+                                setIsAllCaps(next);
+                                localStorage.setItem('lecta_caps', next.toString());
+                            }}
+                        />
+                    )}
+
+                    {isMobile && (
+                        <div style={{
+                            position: 'fixed', top: 0, left: 0, right: 0, height: 'var(--navbar-height)',
+                            backgroundColor: 'var(--bg-color)', zIndex: 1000, display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', borderBottom: '1px solid var(--divider-color)'
+                        }}>
+                            <div style={{ fontSize: '20px', fontWeight: 900, fontFamily: 'var(--font-heading)', letterSpacing: '-0.5px' }}>LECTA</div>
+                        </div>
+                    )}
+
+                    <main style={{ paddingTop: 'var(--navbar-height)', paddingBottom: isMobile ? '80px' : 0 }}>
                         <CategoryFilter
                             activeCategory={activeCategory}
                             onCategoryChange={(cat) => {
@@ -354,6 +375,39 @@ function App() {
                             isAnalyzingMore={isAnalyzingMore}
                         />
                     </main>
+
+                    {isMobile && (
+                        <MobileBottomNav
+                            onOpenSettings={() => setShowMobileSettings(true)}
+                            activeCategory={activeCategory}
+                            onResetCategory={() => setActiveCategory('Alle')}
+                        />
+                    )}
+
+                    <MobileSettingsSheet
+                        isOpen={showMobileSettings}
+                        onClose={() => setShowMobileSettings(false)}
+                        isDark={isDark}
+                        onToggleDark={() => setIsDark(!isDark)}
+                        currentFont={currentFont}
+                        onToggleFont={toggleFont}
+                        fontWeight={fontWeight}
+                        onWeightChange={(w) => {
+                            setFontWeight(w);
+                            localStorage.setItem('lecta_weight', w.toString());
+                        }}
+                        isAllCaps={isAllCaps}
+                        onToggleCaps={() => {
+                            const next = !isAllCaps;
+                            setIsAllCaps(next);
+                            localStorage.setItem('lecta_caps', next.toString());
+                        }}
+                        onGetBackup={() => alert(`Dein Wiederherstellungs-Code:\n\n${getBackupCode()}`)}
+                        onRestore={() => {
+                            const code = prompt('Wiederherstellungs-Code eingeben:')
+                            if (code) restoreFromCode(code)
+                        }}
+                    />
                 </motion.div>
             )}
         </div>
