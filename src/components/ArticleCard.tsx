@@ -78,7 +78,8 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                         fontFamily: 'var(--font-heading)',
                         color: 'var(--text-primary)',
                         margin: 0,
-                        letterSpacing: '-0.02em'
+                        letterSpacing: '-0.02em',
+                        textTransform: 'var(--text-transform)'
                     }}>
                         {article.headline}
                     </h2>
@@ -90,7 +91,8 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                             maxWidth: '100%',
                             fontFamily: 'var(--font-main)',
                             fontWeight: 'var(--font-weight-main)',
-                            margin: 0
+                            margin: 0,
+                            textTransform: 'var(--text-transform)'
                         }}>
                             {article.catcher}
                         </p>

@@ -129,8 +129,16 @@ function App() {
     }
 
     useEffect(() => {
+        document.documentElement.setAttribute('data-font', currentFont);
+    }, [currentFont]);
+
+    useEffect(() => {
         document.documentElement.style.setProperty('--font-weight-main', fontWeight.toString());
     }, [fontWeight]);
+
+    useEffect(() => {
+        document.documentElement.style.setProperty('--text-transform', isAllCaps ? 'uppercase' : 'none');
+    }, [isAllCaps]);
 
     const fetchMoreFromReddit = async () => {
         if (isFetchingMore || !after) return;
@@ -230,7 +238,7 @@ function App() {
     }
 
     return (
-        <div className={`app-container font-${currentFont} ${isAllCaps ? 'all-caps' : ''}`}>
+        <div className="app-container">
             <ToastContainer toasts={toasts} onRemove={removeToast} />
 
             {loading ? (
