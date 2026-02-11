@@ -1,3 +1,8 @@
+// Utility to escape regex special characters
+const escapeRegExp = (string: string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 export type RuleType = 'OR' | 'AND';
 
 export interface FilterRule {
@@ -54,7 +59,8 @@ export const categorizeHeadlineLocal = (headline: string, customRules?: FilterRu
             for (const keyword of rule.keywords) {
                 if (!keyword) continue;
                 try {
-                    const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
+                    const escapedKeyword = escapeRegExp(keyword.toLowerCase());
+                    const regex = new RegExp(`\\b${escapedKeyword}\\b`, 'i');
                     if (regex.test(lowerHeadline)) {
                         return rule.category;
                     }
@@ -68,7 +74,8 @@ export const categorizeHeadlineLocal = (headline: string, customRules?: FilterRu
 
             try {
                 const allMatch = validKeywords.every(keyword => {
-                    const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
+                    const escapedKeyword = escapeRegExp(keyword.toLowerCase());
+                    const regex = new RegExp(`\\b${escapedKeyword}\\b`, 'i');
                     return regex.test(lowerHeadline);
                 });
                 if (allMatch) {

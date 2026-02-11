@@ -5,14 +5,12 @@ const FALLBACK_URL = 'https://lectanews.vercel.app/';
 
 export const fetchRedditNews = async (after?: string): Promise<{ articles: Article[], nextAfter: string | null }> => {
     const fetchFromUrl = async (targetUrl: string, isFallback: boolean = false) => {
-        const url = new URL(targetUrl);
-        if (after) url.searchParams.append('after', after);
-        url.searchParams.append('limit', '40');
-        url.searchParams.append('raw_json', '1');
+        let finalUrl = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'limit=40&raw_json=1';
+        if (after) finalUrl += `&after=${after}`;
 
-        const response = await fetch(url.toString(), {
+        const response = await fetch(finalUrl, {
             method: 'GET',
-            mode: 'cors',
+            mode: 'cors'
         });
 
         if (!response.ok) {
