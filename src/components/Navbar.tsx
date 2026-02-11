@@ -13,7 +13,6 @@ interface NavbarProps {
     onWeightChange: (weight: number) => void;
     isAllCaps: boolean;
     onToggleCaps: () => void;
-    onOpenAdmin: () => void;
 }
 
 export const Navbar = ({
@@ -26,8 +25,7 @@ export const Navbar = ({
     fontWeight,
     onWeightChange,
     isAllCaps,
-    onToggleCaps,
-    onOpenAdmin
+    onToggleCaps
 }: NavbarProps) => {
     const [showSettings, setShowSettings] = useState(false);
 
@@ -52,20 +50,12 @@ export const Navbar = ({
             </div>
 
             <div style={{ display: 'flex', gap: 'clamp(10px, 3vw, 20px)', alignItems: 'center' }}>
-                {/* Admin Trigger */}
-                <button
-                    onClick={onOpenAdmin}
-                    title="Admin Dashboard"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', display: 'flex' }}
-                >
-                    <ShieldCheck size={20} />
-                </button>
 
                 {/* Font Settings Trigger */}
                 <div style={{ position: 'relative' }}>
                     <button
                         onClick={() => setShowSettings(!showSettings)}
-                        title="Schrifteinstellungen"
+                        title="Font Settings"
                         style={{
                             background: 'none',
                             border: 'none',
@@ -108,7 +98,7 @@ export const Navbar = ({
                                 }}
                             >
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Schriftstil</label>
+                                    <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Font Style</label>
                                     <button
                                         onClick={onToggleFont}
                                         style={{
@@ -124,13 +114,13 @@ export const Navbar = ({
                                             alignItems: 'center'
                                         }}
                                     >
-                                        <span>{currentFont === 'serif' ? 'Serifen' : 'Ohne Serifen'}</span>
+                                        <span>{currentFont === 'serif' ? 'Serif' : 'Sans Serif'}</span>
                                         <Type size={16} />
                                     </button>
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Schreibweise</label>
+                                    <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Case</label>
                                     <button
                                         onClick={onToggleCaps}
                                         style={{
@@ -147,14 +137,14 @@ export const Navbar = ({
                                             transition: 'all 0.2s ease'
                                         }}
                                     >
-                                        <span>{isAllCaps ? 'GROSSBUCHSTABEN' : 'Normal'}</span>
-                                        <div style={{ fontSize: '10px', opacity: 0.7 }}>{isAllCaps ? 'AN' : 'AUS'}</div>
+                                        <span>{isAllCaps ? 'ALL CAPS' : 'Normal'}</span>
+                                        <div style={{ fontSize: '10px', opacity: 0.7 }}>{isAllCaps ? 'ON' : 'OFF'}</div>
                                     </button>
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Schriftdicke</label>
+                                        <label style={{ fontSize: '11px', fontWeight: 900, opacity: 0.5 }}>Font Weight</label>
                                         <span style={{ fontSize: '12px', fontWeight: 700 }}>{fontWeight}</span>
                                     </div>
                                     <input
@@ -178,28 +168,27 @@ export const Navbar = ({
 
                 <button
                     onClick={onToggleDark}
-                    title="Dark Mode umschalten"
+                    title="Toggle Dark Mode"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex' }}
                 >
                     {isDark ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
                 <button
                     onClick={onGetBackup}
-                    title="Sicherungs-Code generieren"
+                    title="Generate Backup Code"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex' }}
                 >
                     <Download size={20} />
                 </button>
                 <button
                     onClick={onRestore}
-                    title="Profil wiederherstellen"
+                    title="Restore Profile"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex' }}
                 >
                     <Key size={20} />
                 </button>
                 <Search size={20} strokeWidth={2} />
                 <Bell size={20} strokeWidth={2} />
-                <User size={20} strokeWidth={2} />
             </div>
         </nav>
     )

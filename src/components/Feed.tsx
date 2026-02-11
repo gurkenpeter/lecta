@@ -63,8 +63,8 @@ export const Feed = ({
 
             {displayArticles.length === 0 ? (
                 <div style={{ padding: '100px 20px', textAlign: 'center', opacity: 0.5 }}>
-                    <p style={{ fontSize: '18px', fontWeight: 700 }}>Keine Artikel in dieser Kategorie gefunden.</p>
-                    <p style={{ fontSize: '14px' }}>Versuche es mit einer anderen Kategorie oder lade die Seite neu.</p>
+                    <p style={{ fontSize: '18px', fontWeight: 700 }}>No articles found in this category.</p>
+                    <p style={{ fontSize: '14px' }}>Try another category or refresh the page.</p>
                 </div>
             ) : (
                 displayArticles.map((article, index) => {

@@ -14,7 +14,6 @@ interface MobileSettingsSheetProps {
     onToggleCaps: () => void;
     onGetBackup: () => void;
     onRestore: () => void;
-    onOpenAdmin: () => void;
 }
 
 export const MobileSettingsSheet = ({
@@ -29,8 +28,7 @@ export const MobileSettingsSheet = ({
     isAllCaps,
     onToggleCaps,
     onGetBackup,
-    onRestore,
-    onOpenAdmin
+    onRestore
 }: MobileSettingsSheetProps) => {
     return (
         <AnimatePresence>
@@ -74,14 +72,14 @@ export const MobileSettingsSheet = ({
                         <div style={{ width: '40px', height: '4px', backgroundColor: 'var(--text-primary)', opacity: 0.2, borderRadius: '2px', margin: '0 auto 20px auto' }} />
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 900, marginBottom: 0 }}>Einstellungen</h2>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, marginBottom: 0 }}>Settings</h2>
                             <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'inherit' }}><X size={24} /></button>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-                            {/* Erscheinungsbild */}
+                            {/* Appearance */}
                             <div>
-                                <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '15px', display: 'block' }}>Erscheinungsbild</label>
+                                <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '15px', display: 'block' }}>Appearance</label>
                                 <div style={{ display: 'flex', gap: '15px' }}>
                                     <button
                                         onClick={onToggleDark}
@@ -92,7 +90,7 @@ export const MobileSettingsSheet = ({
                                             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', fontWeight: 800
                                         }}
                                     >
-                                        <Sun size={20} /> Hell
+                                        <Sun size={20} /> Light
                                     </button>
                                     <button
                                         onClick={onToggleDark}
@@ -103,14 +101,14 @@ export const MobileSettingsSheet = ({
                                             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', fontWeight: 800
                                         }}
                                     >
-                                        <Moon size={20} /> Dunkel
+                                        <Moon size={20} /> Dark
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Schriftstil */}
+                            {/* Font Style */}
                             <div>
-                                <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '15px', display: 'block' }}>Schriftart</label>
+                                <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '15px', display: 'block' }}>Font Family</label>
                                 <button
                                     onClick={onToggleFont}
                                     style={{
@@ -119,15 +117,15 @@ export const MobileSettingsSheet = ({
                                         display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                                     }}
                                 >
-                                    <span>{currentFont === 'serif' ? 'Klassik (Serif)' : 'Modern (Sans)'}</span>
+                                    <span>{currentFont === 'serif' ? 'Classic (Serif)' : 'Modern (Sans)'}</span>
                                     <Type size={20} />
                                 </button>
                             </div>
 
-                            {/* Schriftdicke */}
+                            {/* Font Weight */}
                             <div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                    <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Schriftdicke</label>
+                                    <label style={{ fontSize: '12px', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Font Weight</label>
                                     <span style={{ fontSize: '18px', fontWeight: 900 }}>{fontWeight}</span>
                                 </div>
                                 <input
@@ -147,26 +145,12 @@ export const MobileSettingsSheet = ({
                                     display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 900
                                 }}
                             >
-                                <span>GROSSBUCHSTABEN</span>
-                                <div style={{ opacity: 0.6 }}>{isAllCaps ? 'AN' : 'AUS'}</div>
+                                <span>ALL CAPS</span>
+                                <div style={{ opacity: 0.6 }}>{isAllCaps ? 'ON' : 'OFF'}</div>
                             </button>
 
-                            {/* Admin & Filter Dashboard */}
-                            <button
-                                onClick={() => {
-                                    onClose();
-                                    onOpenAdmin();
-                                }}
-                                style={{
-                                    width: '100%', padding: '20px', borderRadius: '20px', border: '2px solid #ef4444',
-                                    backgroundColor: 'transparent', color: '#ef4444',
-                                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: 900
-                                }}
-                            >
-                                <ShieldCheck size={20} /> ADMIN DASHBOARD
-                            </button>
 
-                            {/* Daten */}
+                            {/* Data */}
                             <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
                                 <button onClick={onGetBackup} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '15px', borderRadius: '15px', backgroundColor: 'rgba(0,0,0,0.05)', border: 'none', fontWeight: 800 }}>
                                     <Download size={18} /> Backup

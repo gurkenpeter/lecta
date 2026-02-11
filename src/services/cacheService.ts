@@ -6,17 +6,17 @@ interface CachedArticle {
 }
 
 const CACHE_KEY = 'lecta_article_cache';
-const CACHE_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 Tage Gültigkeit
+const CACHE_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 days validity
 
 let articleCache: Record<string, CachedArticle> = {};
 
-// Cache beim Start laden
+// Load cache on start
 try {
     const saved = localStorage.getItem(CACHE_KEY);
     if (saved) {
         articleCache = JSON.parse(saved);
 
-        // Aufräumen: Alte Einträge entfernen
+        // Cleanup: Remove old entries
         const now = Date.now();
         let cleaned = false;
         Object.keys(articleCache).forEach(id => {
@@ -30,7 +30,7 @@ try {
         }
     }
 } catch (e) {
-    console.error("Fehler beim Laden des Caches", e);
+    console.error("Error loading cache", e);
 }
 
 export const getCachedArticle = (id: string) => {

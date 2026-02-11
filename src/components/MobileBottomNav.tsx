@@ -28,11 +28,11 @@ export const MobileBottomNav = ({ onOpenSettings, activeCategory, onResetCategor
             <button
                 onClick={onResetCategory}
                 style={{
-                    background: 'none', border: 'none', color: activeCategory === 'Alle' ? 'var(--text-primary)' : 'rgba(0,0,0,0.3)',
+                    background: 'none', border: 'none', color: activeCategory === 'All' ? 'var(--text-primary)' : 'rgba(0,0,0,0.3)',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                 }}
             >
-                <Home size={24} strokeWidth={activeCategory === 'Alle' ? 2.5 : 2} />
+                <Home size={24} strokeWidth={activeCategory === 'All' ? 2.5 : 2} />
                 <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase' }}>Home</span>
             </button>
 

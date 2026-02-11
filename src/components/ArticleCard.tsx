@@ -126,7 +126,7 @@ export const ArticleCard = ({ article, isLiked, onLike, onCategoryChange }: Arti
                             boxShadow: '0 4px 0 rgba(0,0,0,0.15)'
                         }}
                     >
-                        <span>LESEN</span>
+                        <span>READ</span>
                         <ExternalLink size={16} />
                     </a>
 

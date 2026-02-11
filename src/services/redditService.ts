@@ -7,14 +7,14 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
     try {
         const url = after ? `${REDDIT_NEWS_URL}?after=${after}` : REDDIT_NEWS_URL;
         const response = await axios.get(url, {
-            timeout: 10000, // 10 Sekunden Timeout
+            timeout: 10000, // 10 seconds timeout
             headers: {
                 'Accept': 'application/json'
             }
         });
 
         if (!response.data || !response.data.data || !response.data.data.children) {
-            console.error('Ungültige Reddit-API-Struktur:', response.data);
+            console.error('Invalid Reddit API structure:', response.data);
             return { articles: [], nextAfter: null };
         }
 
@@ -28,22 +28,22 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
             return {
                 id: data.id,
                 source: data.domain || 'Reddit',
-                headline: data.title || 'Ohne Titel',
+                headline: data.title || 'Untitled',
                 catcher: data.selftext || '',
-                category: 'Panorama',
+                category: 'News',
                 url: data.url,
                 imageUrl: data.thumbnail && data.thumbnail.startsWith('http')
                     ? data.thumbnail
                     : `https://picsum.photos/seed/${data.id}/800/600`,
                 timestamp: data.created_utc
-                    ? new Date(data.created_utc * 1000).toLocaleDateString('de-DE')
-                    : 'Unbekannt',
+                    ? new Date(data.created_utc * 1000).toLocaleDateString('en-US')
+                    : 'Unknown',
             };
         }).filter((a: any) => a !== null) as Article[];
 
         return { articles, nextAfter };
     } catch (error: any) {
-        console.error('Detaillierter Reddit-Fehler:', {
+        console.error('Detailed Reddit error:', {
             message: error.message,
             status: error.response?.status,
             data: error.response?.data

@@ -22,7 +22,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
             }}
         >
             <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '40px' }}>
-                {/* Äußerer pulsierender Ring */}
+                {/* Outer pulsing ring */}
                 <motion.div
                     animate={{
                         scale: [1, 1.2, 1],
@@ -43,7 +43,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
                     }}
                 />
 
-                {/* Innerer rotierender Diamant */}
+                {/* Inner rotating diamond */}
                 <motion.div
                     animate={{
                         rotate: [45, 225, 45],
@@ -64,7 +64,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
                     }}
                 />
 
-                {/* Das "L" Logo */}
+                {/* The "L" Logo */}
                 <div style={{
                     position: 'absolute',
                     top: 0,
@@ -110,7 +110,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
                 {progress}
             </motion.p>
 
-            {/* Kleine Fortschritts-Indikatoren dots */}
+            {/* Small progress indicator dots */}
             <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
                 {[0, 1, 2].map((i) => (
                     <motion.div

@@ -100,7 +100,7 @@ const ToastItem = ({ toast, onRemove }: { toast: ToastMessage, onRemove: (id: st
                                 letterSpacing: '0.1em',
                                 opacity: 0.8
                             }}>
-                                {toast.title || (toast.type === 'error' ? 'Fehler' : 'Info')}
+                                {toast.title || (toast.type === 'error' ? 'Error' : 'Info')}
                             </div>
 
                             {count > 1 && (
@@ -146,9 +146,9 @@ const ToastItem = ({ toast, onRemove }: { toast: ToastMessage, onRemove: (id: st
                                 }}
                             >
                                 {isExpanded ? (
-                                    <>Weniger anzeigen <ChevronUp size={12} /></>
+                                    <>Show less <ChevronUp size={12} /></>
                                 ) : (
-                                    <>Details anzeigen <ChevronDown size={12} /></>
+                                    <>Show details <ChevronDown size={12} /></>
                                 )}
                             </button>
                         )}

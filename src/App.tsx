@@ -6,7 +6,6 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { ToastContainer, ToastMessage } from './components/ToastContainer'
 import { MobileBottomNav } from './components/MobileBottomNav'
 import { MobileSettingsSheet } from './components/MobileSettingsSheet'
-import { AdminDashboard } from './components/AdminDashboard'
 import { Article } from './data/mockArticles'
 import { fetchRedditNews } from './services/redditService'
 import { categorizeHeadlineLocal } from './services/categorizationService'
@@ -16,8 +15,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 function App() {
     const [articles, setArticles] = useState<Article[]>([])
     const [loading, setLoading] = useState(true)
-    const [loadingProgress, setLoadingProgress] = useState('Daten werden geladen...')
-    const [activeCategory, setActiveCategory] = useState('Alle')
+    const [loadingProgress, setLoadingProgress] = useState('Loading data...')
+    const [activeCategory, setActiveCategory] = useState('All')
     const [isDark, setIsDark] = useState(false)
     const [likedArticles, setLikedArticles] = useState<string[]>([])
     const [likedCategories, setLikedCategories] = useState<Record<string, number>>({})
@@ -29,7 +28,6 @@ function App() {
     const [isAllCaps, setIsAllCaps] = useState<boolean>(true)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
     const [showMobileSettings, setShowMobileSettings] = useState(false)
-    const [showAdmin, setShowAdmin] = useState(false)
 
     const addToast = useCallback((message: string, title?: string, type: 'error' | 'warning' | 'info' = 'error') => {
         const id = Math.random().toString(36).substring(2, 9);
@@ -80,11 +78,11 @@ function App() {
 
         const loadData = async () => {
             try {
-                setLoadingProgress('Reddit News werden abgerufen...');
+                setLoadingProgress('Fetching news...');
                 const { articles: redditArticles, nextAfter } = await fetchRedditNews();
 
                 if (!redditArticles || redditArticles.length === 0) {
-                    addToast('Keine Artikel von Reddit erhalten.', 'Info', 'info');
+                    addToast('No articles received.', 'Info', 'info');
                     setArticles([]);
                     setLoading(false);
                     return;
@@ -110,7 +108,7 @@ function App() {
                 setLoading(false)
             } catch (err: any) {
                 console.error("Critical load error:", err);
-                addToast(err.message || 'Ein unbekannter Fehler ist aufgetreten', 'Lade-Fehler');
+                addToast(err.message || 'An unknown error occurred', 'Load Error');
                 setLoading(false)
             }
         }
@@ -163,7 +161,7 @@ function App() {
 
             setArticles(prev => [...prev, ...fullyProcessed]);
         } catch (error) {
-            console.error("Fehler beim Nachladen von Reddit", error);
+            console.error("Error loading more news", error);
         } finally {
             setIsFetchingMore(false);
         }
@@ -196,7 +194,7 @@ function App() {
     }
 
     const getSortedArticles = () => {
-        let filtered = activeCategory === 'Alle'
+        let filtered = activeCategory === 'All'
             ? articles
             : articles.filter(a => a.category === activeCategory)
 
@@ -231,9 +229,9 @@ function App() {
             if (data.font) setCurrentFont(data.font)
             if (data.weight) setFontWeight(data.weight)
             if (data.caps) setIsAllCaps(data.caps)
-            addToast('Profil erfolgreich wiederhergestellt!', 'Erfolg', 'info')
+            addToast('Profile successfully restored!', 'Success', 'info')
         } catch (e) {
-            addToast('Ungültiger Wiederherstellungs-Code', 'Fehler')
+            addToast('Invalid backup code', 'Error')
         }
     }
 
@@ -253,9 +251,9 @@ function App() {
                         <Navbar
                             isDark={isDark}
                             onToggleDark={() => setIsDark(!isDark)}
-                            onGetBackup={() => alert(`Dein Wiederherstellungs-Code:\n\n${getBackupCode()}`)}
+                            onGetBackup={() => alert(`Your backup code:\n\n${getBackupCode()}`)}
                             onRestore={() => {
-                                const code = prompt('Wiederherstellungs-Code eingeben:')
+                                const code = prompt('Enter backup code:')
                                 if (code) restoreFromCode(code)
                             }}
                             currentFont={currentFont}
@@ -271,7 +269,6 @@ function App() {
                                 setIsAllCaps(next);
                                 localStorage.setItem('lecta_caps', next.toString());
                             }}
-                            onOpenAdmin={() => setShowAdmin(true)}
                         />
                     )}
 
@@ -309,7 +306,7 @@ function App() {
                         <MobileBottomNav
                             onOpenSettings={() => setShowMobileSettings(true)}
                             activeCategory={activeCategory}
-                            onResetCategory={() => setActiveCategory('Alle')}
+                            onResetCategory={() => setActiveCategory('All')}
                         />
                     )}
 
@@ -331,21 +328,13 @@ function App() {
                             setIsAllCaps(next);
                             localStorage.setItem('lecta_caps', next.toString());
                         }}
-                        onGetBackup={() => alert(`Dein Wiederherstellungs-Code:\n\n${getBackupCode()}`)}
+                        onGetBackup={() => alert(`Your backup code:\n\n${getBackupCode()}`)}
                         onRestore={() => {
-                            const code = prompt('Wiederherstellungs-Code eingeben:')
+                            const code = prompt('Enter backup code:')
                             if (code) restoreFromCode(code)
                         }}
-                        onOpenAdmin={() => setShowAdmin(true)}
                     />
                 </motion.div>
-            )}
-
-            {showAdmin && (
-                <AdminDashboard
-                    onClose={() => setShowAdmin(false)}
-                    onRulesChanged={refreshCategories}
-                />
             )}
         </div>
     )
