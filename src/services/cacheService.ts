@@ -11,27 +11,33 @@ const CACHE_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 days validity
 let articleCache: Record<string, CachedArticle> = {};
 
 // Load cache on start
-try {
-    const saved = localStorage.getItem(CACHE_KEY);
-    if (saved) {
-        articleCache = JSON.parse(saved);
+const loadInitialCache = () => {
+    try {
+        const saved = localStorage.getItem(CACHE_KEY);
+        if (saved) {
+            articleCache = JSON.parse(saved);
 
-        // Cleanup: Remove old entries
-        const now = Date.now();
-        let cleaned = false;
-        Object.keys(articleCache).forEach(id => {
-            if (now - articleCache[id].timestamp > CACHE_EXPIRY) {
-                delete articleCache[id];
-                cleaned = true;
+            // Cleanup: Remove old entries
+            const now = Date.now();
+            let cleaned = false;
+            Object.keys(articleCache).forEach(id => {
+                if (now - articleCache[id].timestamp > CACHE_EXPIRY) {
+                    delete articleCache[id];
+                    cleaned = true;
+                }
+            });
+            if (cleaned) {
+                try {
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
+                } catch (e) { /* ignore quota errors */ }
             }
-        });
-        if (cleaned) {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
         }
+    } catch (e) {
+        console.error("Error loading cache", e);
     }
-} catch (e) {
-    console.error("Error loading cache", e);
-}
+};
+
+loadInitialCache();
 
 export const getCachedArticle = (id: string) => {
     return articleCache[id] || null;
@@ -43,7 +49,11 @@ export const saveToCache = (id: string, category: string, catcher: string) => {
         catcher,
         timestamp: Date.now()
     };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
+    } catch (e) {
+        console.warn("Could not save to localStorage (quota exceeded or access denied)");
+    }
 };
 
 export const saveBatchToCache = (results: Record<string, { category: string, catcher: string }>) => {
@@ -54,5 +64,9 @@ export const saveBatchToCache = (results: Record<string, { category: string, cat
             timestamp: now
         };
     });
-    localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(articleCache));
+    } catch (e) {
+        console.warn("Could not save batch to localStorage");
+    }
 };

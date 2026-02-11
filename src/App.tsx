@@ -57,12 +57,20 @@ function App() {
     }, [])
 
     useEffect(() => {
-        const savedLiked = localStorage.getItem('lecta_liked')
-        const savedCategories = localStorage.getItem('lecta_categories')
-        const savedTheme = localStorage.getItem('lecta_theme')
-        const savedFont = localStorage.getItem('lecta_font')
-        const savedWeight = localStorage.getItem('lecta_weight')
-        const savedCaps = localStorage.getItem('lecta_caps')
+        const safeGet = (key: string) => {
+            try {
+                return localStorage.getItem(key);
+            } catch (e) {
+                return null;
+            }
+        };
+
+        const savedLiked = safeGet('lecta_liked')
+        const savedCategories = safeGet('lecta_categories')
+        const savedTheme = safeGet('lecta_theme')
+        const savedFont = safeGet('lecta_font')
+        const savedWeight = safeGet('lecta_weight')
+        const savedCaps = safeGet('lecta_caps')
 
         try {
             if (savedLiked) setLikedArticles(JSON.parse(savedLiked))
@@ -117,13 +125,17 @@ function App() {
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
-        localStorage.setItem('lecta_theme', isDark ? 'dark' : 'light')
+        try {
+            localStorage.setItem('lecta_theme', isDark ? 'dark' : 'light')
+        } catch (e) { /* ignore */ }
     }, [isDark])
 
     const toggleFont = () => {
         const next = currentFont === 'serif' ? 'sans' : 'serif'
         setCurrentFont(next)
-        localStorage.setItem('lecta_font', next)
+        try {
+            localStorage.setItem('lecta_font', next)
+        } catch (e) { /* ignore */ }
     }
 
     useEffect(() => {
@@ -189,8 +201,10 @@ function App() {
 
         setLikedArticles(newLikedArticles)
         setLikedCategories(newLikedCategories)
-        localStorage.setItem('lecta_liked', JSON.stringify(newLikedArticles))
-        localStorage.setItem('lecta_categories', JSON.stringify(newLikedCategories))
+        try {
+            localStorage.setItem('lecta_liked', JSON.stringify(newLikedArticles))
+            localStorage.setItem('lecta_categories', JSON.stringify(newLikedCategories))
+        } catch (e) { /* ignore */ }
     }
 
     const getSortedArticles = () => {
@@ -198,7 +212,7 @@ function App() {
             ? articles
             : articles.filter(a => a.category === activeCategory)
 
-        if (activeCategory === 'Alle' && Object.keys(likedCategories).length > 0) {
+        if (activeCategory === 'All' && Object.keys(likedCategories).length > 0) {
             return [...filtered].sort((a, b) => {
                 const scoreA = likedCategories[a.category] || 0
                 const scoreB = likedCategories[b.category] || 0
@@ -261,13 +275,17 @@ function App() {
                             fontWeight={fontWeight}
                             onWeightChange={(w) => {
                                 setFontWeight(w);
-                                localStorage.setItem('lecta_weight', w.toString());
+                                try {
+                                    localStorage.setItem('lecta_weight', w.toString());
+                                } catch (e) { /* ignore */ }
                             }}
                             isAllCaps={isAllCaps}
                             onToggleCaps={() => {
                                 const next = !isAllCaps;
                                 setIsAllCaps(next);
-                                localStorage.setItem('lecta_caps', next.toString());
+                                try {
+                                    localStorage.setItem('lecta_caps', next.toString());
+                                } catch (e) { /* ignore */ }
                             }}
                         />
                     )}
@@ -320,13 +338,17 @@ function App() {
                         fontWeight={fontWeight}
                         onWeightChange={(w) => {
                             setFontWeight(w);
-                            localStorage.setItem('lecta_weight', w.toString());
+                            try {
+                                localStorage.setItem('lecta_weight', w.toString());
+                            } catch (e) { /* ignore */ }
                         }}
                         isAllCaps={isAllCaps}
                         onToggleCaps={() => {
                             const next = !isAllCaps;
                             setIsAllCaps(next);
-                            localStorage.setItem('lecta_caps', next.toString());
+                            try {
+                                localStorage.setItem('lecta_caps', next.toString());
+                            } catch (e) { /* ignore */ }
                         }}
                         onGetBackup={() => alert(`Your backup code:\n\n${getBackupCode()}`)}
                         onRestore={() => {
