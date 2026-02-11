@@ -2,6 +2,7 @@
 import { Article, mockArticles } from '../data/mockArticles';
 
 const REDDIT_ENDPOINTS = [
+    '/api/news', // Try our Vercel Serverless Function first (sets correct User-Agent)
     'https://www.reddit.com/r/news.json',
     'https://api.reddit.com/r/news.json'
 ];
@@ -11,7 +12,8 @@ export const fetchRedditNews = async (after?: string): Promise<{ articles: Artic
 
     for (const endpoint of REDDIT_ENDPOINTS) {
         try {
-            const url = new URL(endpoint);
+            // Handle both relative (/api/news) and absolute URLs
+            const url = new URL(endpoint, window.location.origin);
             if (after) url.searchParams.append('after', after);
             url.searchParams.append('limit', '40');
             url.searchParams.append('raw_json', '1');
