@@ -87,7 +87,11 @@ function App() {
         const loadData = async () => {
             try {
                 setLoadingProgress('Fetching news...');
-                const { articles: redditArticles, nextAfter } = await fetchRedditNews();
+                const { articles: redditArticles, nextAfter, isFallback } = await fetchRedditNews();
+
+                if (isFallback) {
+                    addToast('Loaded demo content due to network issues.', 'Offline Mode', 'info');
+                }
 
                 if (!redditArticles || redditArticles.length === 0) {
                     addToast('No articles received.', 'Info', 'info');
