@@ -66,17 +66,30 @@ function App() {
         const savedWeight = localStorage.getItem('lecta_weight')
         const savedCaps = localStorage.getItem('lecta_caps')
 
-        if (savedLiked) setLikedArticles(JSON.parse(savedLiked))
-        if (savedCategories) setLikedCategories(JSON.parse(savedCategories))
+        try {
+            if (savedLiked) setLikedArticles(JSON.parse(savedLiked))
+            if (savedCategories) setLikedCategories(JSON.parse(savedCategories))
+        } catch (e) {
+            console.error("Error restoring liked articles/categories:", e);
+        }
+
         if (savedTheme) setIsDark(savedTheme === 'dark')
         if (savedFont) setCurrentFont(savedFont as 'serif' | 'sans')
-        if (savedWeight) setFontWeight(parseInt(savedWeight))
+        if (savedWeight) setFontWeight(parseInt(savedWeight) || 500)
         if (savedCaps) setIsAllCaps(savedCaps === 'true')
 
         const loadData = async () => {
             try {
                 setLoadingProgress('Reddit News werden abgerufen...');
                 const { articles: redditArticles, nextAfter } = await fetchRedditNews();
+
+                if (!redditArticles || redditArticles.length === 0) {
+                    addToast('Keine Artikel von Reddit erhalten.', 'Info', 'info');
+                    setArticles([]);
+                    setLoading(false);
+                    return;
+                }
+
                 setAfter(nextAfter);
 
                 const processedArticles = redditArticles.map((article: Article) => {
@@ -96,7 +109,8 @@ function App() {
                 setArticles(fullyProcessed);
                 setLoading(false)
             } catch (err: any) {
-                addToast(err.message, 'Lade-Fehler');
+                console.error("Critical load error:", err);
+                addToast(err.message || 'Ein unbekannter Fehler ist aufgetreten', 'Lade-Fehler');
                 setLoading(false)
             }
         }

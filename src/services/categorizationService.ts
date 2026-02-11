@@ -9,7 +9,7 @@ export interface FilterRule {
 
 // Standard-Regeln (ehemals die statische Liste)
 const DEFAULT_RULES: FilterRule[] = [
-    { id: '1', category: 'Politik', type: 'OR', keywords: ['government', 'parliament', 'election', 'minister', 'senate', 'congress', 'president', 'chancellor', 'party', 'coalition', 'legislation', 'law', 'bill', 'diplomat', 'policy', 'vote', 'campaign', 'opposition', 'democracy', 'referendum', 'epstein', 'trump'] },
+    { id: '1', category: 'Politik', type: 'OR', keywords: ["detention", 'government', 'parliament', 'election', 'minister', 'senate', 'congress', 'president', 'chancellor', 'party', 'coalition', 'legislation', 'law', 'bill', 'diplomat', 'policy', 'vote', 'campaign', 'opposition', 'democracy', 'referendum', 'epstein', 'trump'] },
     { id: '2', category: 'Wirtschaft', type: 'OR', keywords: ['stock', 'MARKET', 'shares', 'corporation', 'company', 'CEO', 'profit', 'loss', 'revenue', 'GDP', 'inflation', 'recession', 'trade', 'export', 'import', 'investment', 'merger', 'acquisition', 'employment', 'unemployment', 'interest rate', 'central bank', 'economy', 'industry'] },
     { id: '3', category: 'Panorama', type: 'OR', keywords: ['accident', 'incident', 'crime', 'police', 'court', 'trial', 'victim', 'witness', 'disaster', 'emergency', 'rescue', 'fire', 'flood', 'weather', 'community', 'people', 'daily life', 'society'] },
     { id: '4', category: 'Sport', type: 'OR', keywords: ['football', 'soccer', 'basketball', 'tennis', 'championship', 'league', 'tournament', 'match', 'game', 'player', 'athlete', 'coach', 'team', 'goal', 'score', 'win', 'defeat', 'Olympic', 'World Cup', 'medal', 'training'] },
@@ -22,8 +22,15 @@ const DEFAULT_RULES: FilterRule[] = [
 ];
 
 export const getStoredRules = (): FilterRule[] => {
-    const saved = localStorage.getItem('lecta_filter_rules');
-    if (saved) return JSON.parse(saved);
+    try {
+        const saved = localStorage.getItem('lecta_filter_rules');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (e) {
+        console.error("Filter rules parse error:", e);
+    }
     return DEFAULT_RULES;
 };
 
@@ -32,26 +39,42 @@ export const saveRules = (rules: FilterRule[]) => {
 };
 
 export const categorizeHeadlineLocal = (headline: string, customRules?: FilterRule[]): string => {
+    if (!headline) return 'Panorama';
+
     const lowerHeadline = headline.toLowerCase();
     const rules = customRules || getStoredRules();
 
+    if (!Array.isArray(rules)) return 'Panorama';
+
     for (const rule of rules) {
+        if (!rule || !rule.keywords || !Array.isArray(rule.keywords)) continue;
+
         if (rule.type === 'OR') {
-            // OR Logik: Eines der Keywords muss vorkommen
             for (const keyword of rule.keywords) {
-                const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
-                if (regex.test(lowerHeadline)) {
-                    return rule.category;
+                if (!keyword) continue;
+                try {
+                    const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
+                    if (regex.test(lowerHeadline)) {
+                        return rule.category;
+                    }
+                } catch (e) {
+                    console.error("Invalid regex for keyword:", keyword);
                 }
             }
         } else if (rule.type === 'AND') {
-            // AND Logik: ALLE Keywords müssen vorkommen
-            const allMatch = rule.keywords.every(keyword => {
-                const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
-                return regex.test(lowerHeadline);
-            });
-            if (allMatch && rule.keywords.length > 0) {
-                return rule.category;
+            const validKeywords = rule.keywords.filter(k => !!k);
+            if (validKeywords.length === 0) continue;
+
+            try {
+                const allMatch = validKeywords.every(keyword => {
+                    const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'i');
+                    return regex.test(lowerHeadline);
+                });
+                if (allMatch) {
+                    return rule.category;
+                }
+            } catch (e) {
+                console.error("Invalid regex in AND rule:", rule.keywords);
             }
         }
     }

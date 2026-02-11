@@ -49,15 +49,22 @@ export const Feed = ({
         <div style={{ padding: 'var(--content-padding-v) var(--content-padding-h)', maxWidth: '850px', margin: '0 auto' }}>
             <div id="feed-start" />
 
-            {displayArticles.map((article) => (
-                <ArticleCard
-                    key={article.id}
-                    article={article}
-                    isLiked={likedArticles.includes(article.id)}
-                    onLike={onLike}
-                    onCategoryChange={onCategoryChange}
-                />
-            ))}
+            {displayArticles.length === 0 ? (
+                <div style={{ padding: '100px 20px', textAlign: 'center', opacity: 0.5 }}>
+                    <p style={{ fontSize: '18px', fontWeight: 700 }}>Keine Artikel in dieser Kategorie gefunden.</p>
+                    <p style={{ fontSize: '14px' }}>Versuche es mit einer anderen Kategorie oder lade die Seite neu.</p>
+                </div>
+            ) : (
+                displayArticles.map((article) => (
+                    <ArticleCard
+                        key={article.id}
+                        article={article}
+                        isLiked={likedArticles.includes(article.id)}
+                        onLike={onLike}
+                        onCategoryChange={onCategoryChange}
+                    />
+                ))
+            )}
 
             <div style={{
                 padding: '60px 0',
