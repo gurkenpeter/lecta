@@ -5,7 +5,7 @@ interface CachedArticle {
     timestamp: number;
 }
 
-const CACHE_KEY = 'lecta_article_cache';
+const CACHE_KEY = 'kairos_article_cache';
 const CACHE_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 days validity
 
 let articleCache: Record<string, CachedArticle> = {};

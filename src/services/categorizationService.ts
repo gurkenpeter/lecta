@@ -29,7 +29,7 @@ export const DEFAULT_RULES: FilterRule[] = [
 
 export const getStoredRules = (): FilterRule[] => {
     try {
-        const saved = localStorage.getItem('lecta_filter_rules');
+        const saved = localStorage.getItem('kairos_filter_rules');
         if (saved) {
             const parsed = JSON.parse(saved);
             if (Array.isArray(parsed)) return parsed;
@@ -41,7 +41,7 @@ export const getStoredRules = (): FilterRule[] => {
 };
 
 export const saveRules = (rules: FilterRule[]) => {
-    localStorage.setItem('lecta_filter_rules', JSON.stringify(rules));
+    localStorage.setItem('kairos_filter_rules', JSON.stringify(rules));
 };
 
 export const categorizeHeadlineLocal = (headline: string, customRules?: FilterRule[]): string => {

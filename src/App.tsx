@@ -65,12 +65,12 @@ function App() {
             }
         };
 
-        const savedLiked = safeGet('lecta_liked')
-        const savedCategories = safeGet('lecta_categories')
-        const savedTheme = safeGet('lecta_theme')
-        const savedFont = safeGet('lecta_font')
-        const savedWeight = safeGet('lecta_weight')
-        const savedCaps = safeGet('lecta_caps')
+        const savedLiked = safeGet('kairos_liked')
+        const savedCategories = safeGet('kairos_categories')
+        const savedTheme = safeGet('kairos_theme')
+        const savedFont = safeGet('kairos_font')
+        const savedWeight = safeGet('kairos_weight')
+        const savedCaps = safeGet('kairos_caps')
 
         try {
             if (savedLiked) setLikedArticles(JSON.parse(savedLiked))
@@ -130,7 +130,7 @@ function App() {
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
         try {
-            localStorage.setItem('lecta_theme', isDark ? 'dark' : 'light')
+            localStorage.setItem('kairos_theme', isDark ? 'dark' : 'light')
         } catch (e) { /* ignore */ }
     }, [isDark])
 
@@ -138,7 +138,7 @@ function App() {
         const next = currentFont === 'serif' ? 'sans' : 'serif'
         setCurrentFont(next)
         try {
-            localStorage.setItem('lecta_font', next)
+            localStorage.setItem('kairos_font', next)
         } catch (e) { /* ignore */ }
     }
 
@@ -206,8 +206,8 @@ function App() {
         setLikedArticles(newLikedArticles)
         setLikedCategories(newLikedCategories)
         try {
-            localStorage.setItem('lecta_liked', JSON.stringify(newLikedArticles))
-            localStorage.setItem('lecta_categories', JSON.stringify(newLikedCategories))
+            localStorage.setItem('kairos_liked', JSON.stringify(newLikedArticles))
+            localStorage.setItem('kairos_categories', JSON.stringify(newLikedCategories))
         } catch (e) { /* ignore */ }
     }
 
@@ -280,7 +280,7 @@ function App() {
                             onWeightChange={(w) => {
                                 setFontWeight(w);
                                 try {
-                                    localStorage.setItem('lecta_weight', w.toString());
+                                    localStorage.setItem('kairos_weight', w.toString());
                                 } catch (e) { /* ignore */ }
                             }}
                             isAllCaps={isAllCaps}
@@ -288,7 +288,7 @@ function App() {
                                 const next = !isAllCaps;
                                 setIsAllCaps(next);
                                 try {
-                                    localStorage.setItem('lecta_caps', next.toString());
+                                    localStorage.setItem('kairos_caps', next.toString());
                                 } catch (e) { /* ignore */ }
                             }}
                         />
@@ -300,7 +300,7 @@ function App() {
                             backgroundColor: 'var(--bg-color)', zIndex: 1000, display: 'flex', alignItems: 'center',
                             justifyContent: 'center', borderBottom: '1px solid var(--divider-color)'
                         }}>
-                            <div style={{ fontSize: '20px', fontWeight: 900, fontFamily: 'var(--font-heading)', letterSpacing: '-0.5px' }}>LECTA</div>
+                            <div style={{ fontSize: '20px', fontWeight: 900, fontFamily: 'var(--font-heading)', letterSpacing: '-0.5px' }}>KAIROS</div>
                         </div>
                     )}
 
@@ -343,7 +343,7 @@ function App() {
                         onWeightChange={(w) => {
                             setFontWeight(w);
                             try {
-                                localStorage.setItem('lecta_weight', w.toString());
+                                localStorage.setItem('kairos_weight', w.toString());
                             } catch (e) { /* ignore */ }
                         }}
                         isAllCaps={isAllCaps}
@@ -351,7 +351,7 @@ function App() {
                             const next = !isAllCaps;
                             setIsAllCaps(next);
                             try {
-                                localStorage.setItem('lecta_caps', next.toString());
+                                localStorage.setItem('kairos_caps', next.toString());
                             } catch (e) { /* ignore */ }
                         }}
                         onGetBackup={() => alert(`Your backup code:\n\n${getBackupCode()}`)}

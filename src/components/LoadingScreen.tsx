@@ -79,7 +79,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
                     color: 'var(--bg-color)',
                     mixBlendMode: 'difference'
                 }}>
-                    L
+                    K
                 </div>
             </div>
 
@@ -94,7 +94,7 @@ export const LoadingScreen = ({ progress }: { progress: string }) => {
                     marginBottom: '10px'
                 }}
             >
-                Lecta
+                Kairos
             </motion.h2>
 
             <motion.p

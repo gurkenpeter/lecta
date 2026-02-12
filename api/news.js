@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     try {
         const response = await fetch(url, {
             headers: {
-                'User-Agent': 'web:lectanews:v1.0 (by /u/lectanews_dev)'
+                'User-Agent': 'web:kairosnews:v1.0 (by /u/kairosnews_dev)'
             }
         });
 

@@ -1,7 +1,7 @@
-BERICHT: IMPLEMENTIERUNG EINES EMPFEHLUNGS-ALGORITHMUS (LECTA)
+BERICHT: IMPLEMENTIERUNG EINES EMPFEHLUNGS-ALGORITHMUS (KAIROS)
 
 Zusammenfassung:
-Die Implementierung eines personalisierten Feeds kann in drei Komplexitätsstufen unterteilt werden. Für eine Web-App wie Lecta ist eine "Frontend-First"-Lösung kurzfristig am effizientesten.
+Die Implementierung eines personalisierten Feeds kann in drei Komplexitätsstufen unterteilt werden. Für eine Web-App wie Kairos ist eine "Frontend-First"-Lösung kurzfristig am effizientesten.
 
 STUFE 1: DIE BASIS-VERSION (Frontend-Only)
 Komplexität: Gering (1-2 Tage)
@@ -24,5 +24,5 @@ Funktionsweise:
 - Ähnlichkeit: Das System zeigt Artikel an, deren Vektoren nah an den Vektoren der vom Nutzer bereits gelesenen Artikel liegen ("Collaborative Filtering").
 Vorteil: Erkennt Interessen auch über Kategorien hinweg (z.B. Nutzer mag speziell "KI-Hardware", nicht nur allgemein "Technik").
 
-EMPFEHLUNG FÜR LECTA:
+EMPFEHLUNG FÜR KAIROS:
 Ich empfehle mit Stufe 1 zu starten. Wir können das "Like"-System (Herz-Icon) implementieren und die Daten lokal speichern, um den Feed sofort dynamischer wirken zu lassen, ohne eine komplexe Server-Infrastruktur aufbauen zu müssen.

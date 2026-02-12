@@ -46,7 +46,7 @@ export const Navbar = ({
             color: 'var(--text-primary)'
         }}>
             <div style={{ fontSize: '24px', fontWeight: 900, fontFamily: 'var(--font-heading)', letterSpacing: '-1px' }}>
-                LECTA
+                KAIROS
             </div>
 
             <div style={{ display: 'flex', gap: 'clamp(10px, 3vw, 20px)', alignItems: 'center' }}>
